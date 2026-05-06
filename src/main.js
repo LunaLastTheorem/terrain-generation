@@ -60,25 +60,25 @@ function addStar(){
 
 Array(200).fill().forEach(addStar)
 
-const jeffTexture = new THREE.TextureLoader().load('screen.png');
-scene.background = jeffTexture
+const jerryTexture = new THREE.TextureLoader().load('screen.png');
+scene.background = jerryTexture
 
-const jeff = new THREE.Mesh(
+const jerry = new THREE.Mesh(
   new THREE.ConeGeometry(5,5,3,),
-  new THREE.MeshBasicMaterial( {map: jeffTexture} )
+  new THREE.MeshBasicMaterial( {map: jerryTexture} )
 )
 
 scene.add(pointLight, ambientLight)
-scene.add(jeff)
+scene.add(jerry)
 
 function animate() {
   requestAnimationFrame(animate)
 
-  // jeff.rotation.y -= 0.01;
-  if (keys['w']) jeff.rotation.x += 0.01;
-  if (keys['a']) jeff.rotation.y += 0.01;
-  if (keys['s']) jeff.rotation.x -= 0.01;
-  if (keys['d']) jeff.rotation.y -= 0.01;
+  // jerry.rotation.y -= 0.01;
+  if (keys['w']) jerry.rotation.x += 0.01;
+  if (keys['a']) jerry.rotation.y += 0.01;
+  if (keys['s']) jerry.rotation.x -= 0.01;
+  if (keys['d']) jerry.rotation.y -= 0.01;
   
 
   controls.update()

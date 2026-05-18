@@ -50,19 +50,3 @@ function dotProductGrid(x, y, gx, gy){
 function lerp(x, a, b){
     return a + x * (b - a);
 }
-
-const canvas = document.querySelector('#bg');
-const ctx = canvas.getContext("2d");
-
-const width = canvas.width;
-const height = canvas.height;
-
-for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-        const value = perlinGet(x / 50, y / 50);
-        const color = Math.floor(value * 255);
-
-        ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
-        ctx.fillRect(x, y, 1, 1);
-    }
-}

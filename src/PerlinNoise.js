@@ -1,17 +1,16 @@
-class PerlinNoise {
+export class PerlinNoise {
     constructor(nodes = 5) {
-        this.noes = nodes
+        this.nodes = nodes
+        this.grid = []
 
         this.generateGrid()
     }
 
     generateGrid() {
-        this.grid = []
-
-        for (let i = 0; i <= this.nodes; i++) {
+        for (let i = 0; i < this.nodes; i++) {
             let row = []
 
-            for (let j = 0; j <= this.nodes; j++) {
+            for (let j = 0; j < this.nodes; j++) {
                 row.push(this.randomUnitVector())
             }
 
@@ -38,24 +37,30 @@ class PerlinNoise {
         let y0 = Math.floor(y);
         let y1 = y0 + 1;
 
-        const sx = fade(x - x0);
-        const sy = fade(y - y0);
+        const sx = this.fade(x - x0);
+        const sy = this.fade(y - y0);
 
-        const n0 = dotProductGrid(x, y, x0, y0);
-        const n1 = dotProductGrid(x, y, x1, y0);
-        const ix0 = lerp(sx, n0, n1);
+        const n0 = this.dotProductGrid(x, y, x0, y0);
+        const n1 = this.dotProductGrid(x, y, x1, y0);
+        const ix0 = this.lerp(sx, n0, n1);
 
-        const n2 = dotProductGrid(x, y, x0, y1);
-        const n3 = dotProductGrid(x, y, x1, y1);
-        const ix1 = lerp(sx, n2, n3);
+        const n2 = this.dotProductGrid(x, y, x0, y1);
+        const n3 = this.dotProductGrid(x, y, x1, y1);
+        const ix1 = this.lerp(sx, n2, n3);
 
-        const value = lerp(sy, ix0, ix1);
+        const value = this.lerp(sy, ix0, ix1);
 
         return (value + 1) / 2;
     }
 
     dotProductGrid(x, y, gx, gy) {
-        const gradient = grid[gx][gy];
+        gx = gx % this.nodes
+        gy = gy % this.nodes
+
+        if (gx < 0) gx += this.nodes
+        if (gy < 0) gy += this.nodes
+
+        const gradient = this.grid[gx][gy];
         const dx = x - gx;
         const dy = y - gy;
         return dx * gradient.x + dy * gradient.y;

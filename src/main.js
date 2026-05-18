@@ -47,17 +47,18 @@ scene.add(cube)
 const gui = new GUI()
 
 const settings = {
-  rotationSpeed: 0.01,
+  frequency: 0.01,
+  redistribution: 0.01,
+  waterLevel: 0.01,
 }
 
-gui.add(settings, 'rotationSpeed', 0, 0.2, 0.001).name('Rotation Speed')
+gui.add(settings, 'frequency', 0, 0.2, 0.001).name('Frequency')
+gui.add(settings, 'redistribution', 0, 10, 0.01).name('Elevation')
+gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level')
 
 renderer.render(scene, camera)
 function animate() {
   requestAnimationFrame(animate)
-
-  cube.rotation.x += settings.rotationSpeed
-  cube.rotation.y += settings.rotationSpeed
   
   controls.update()
   renderer.render(scene, camera)

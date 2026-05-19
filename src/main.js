@@ -50,7 +50,7 @@ gui.add(settings, 'persistence', 0.3, 3, 0.01).name('Persistence').onChange(() =
 gui.add(settings, 'lacunarity', 1.5, 2.5, 0.01).name('Lacunarity').onChange(() => terrain.update(settings))
 gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level').onChange(() => terrain.update(settings))
 gui.add(settings, 'height', 0, 6000, 10).name('Height').onChange(() => terrain.update(settings))
-gui.add(settings, 'regenerateFunction').name('Regenerate')
+//gui.add(settings, 'regenerateFunction').name('Regenerate')
 
 const scene = new THREE.Scene();
 

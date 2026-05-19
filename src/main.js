@@ -37,14 +37,14 @@ const settings = {
   }
 }
 
-gui.add(settings, 'frequency', 0, 0.2, 0.001).name('Frequency')
-gui.add(settings, 'redistribution', 0, 10, 0.01).name('Elevation')
-gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level')
+gui.add(settings, 'frequency', 0, 0.2, 0.001).name('Frequency').onChange(() => terrain.update(settings))
+gui.add(settings, 'redistribution', 0, 10, 0.01).name('Elevation').onChange(() => terrain.update(settings))
+gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level').onChange(() => terrain.update(settings))
 gui.add(settings, 'regenerateFunction').name('Regenerate')
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
 const container = document.querySelector("#canvas-container")
 
@@ -68,7 +68,7 @@ light.position.set(10, 20, 10)
 
 
 scene.add(cube)
-const terrain = new TerrainMesh(100, 200, 15)
+const terrain = new TerrainMesh(1000, 500, 15)
 
 scene.add(terrain.getMesh())
 

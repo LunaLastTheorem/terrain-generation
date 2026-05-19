@@ -10,9 +10,33 @@ export class TerrainMesh {
         this.mesh = this._build();
     }
 
-    rebuild(){
+    rebuild() {
         this.noise = new PerlinNoise(8)
         this.mesh = this._build()
+    }
+
+    update(settings) {
+        const geometry = this.mesh.geometry
+        
+        const pos = geometry.attributes.position;
+
+        for (let i = 0; i < pos.count; i++) {
+            const x = pos.getX(i);
+            const z = pos.getZ(i);
+
+            const nx = (x / this.size + 0.5) * 4;
+            const nz = (z / this.size + 0.5) * 4;
+
+            let n = 0;
+            n += 1.0 * this.noise.get(nx * 1, nz * 1);
+            n = Math.pow(n + 1, settings.redistribution)
+
+            const y = n * this.height;
+            pos.setY(i, y);
+        }
+
+        geometry.attributes.position.needsUpdate = true
+        geometry.computeVertexNormals()
     }
 
     _build() {
@@ -36,7 +60,7 @@ export class TerrainMesh {
             const nz = (z / this.size + 0.5) * 4;
 
             let n = 0;
-            n += 1.0  * this.noise.get(nx * 1, nz * 1);
+            n += 1.0 * this.noise.get(nx * 1, nz * 1);
 
             const y = n * this.height;
             pos.setY(i, y);

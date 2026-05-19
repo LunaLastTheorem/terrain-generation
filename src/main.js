@@ -34,12 +34,14 @@ const settings = {
     scene.remove(terrain.getMesh())
     terrain.rebuild()
     scene.add(terrain.getMesh())
-  }
+  },
+  height: 60,
 }
 
 gui.add(settings, 'frequency', 0, 0.2, 0.001).name('Frequency').onChange(() => terrain.update(settings))
-gui.add(settings, 'redistribution', 0, 10, 0.01).name('Elevation').onChange(() => terrain.update(settings))
+gui.add(settings, 'redistribution', 0, 3, 0.001).name('Elevation').onChange(() => terrain.update(settings))
 gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level').onChange(() => terrain.update(settings))
+gui.add(settings, 'height', 0, 1500, 10).name('Height').onChange(() => terrain.update(settings))
 gui.add(settings, 'regenerateFunction').name('Regenerate')
 
 const scene = new THREE.Scene();
@@ -68,7 +70,7 @@ light.position.set(10, 20, 10)
 
 
 scene.add(cube)
-const terrain = new TerrainMesh(1000, 500, 15)
+const terrain = new TerrainMesh(5000, 500, 600)
 
 scene.add(terrain.getMesh())
 

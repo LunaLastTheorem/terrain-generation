@@ -17,7 +17,10 @@ export class TerrainMesh {
 
     update(settings) {
         const geometry = this.mesh.geometry
-        
+        const colors = [];
+        const color = new THREE.Color()
+        const h = settings.height
+
         const pos = geometry.attributes.position;
 
         for (let i = 0; i < pos.count; i++) {
@@ -29,13 +32,33 @@ export class TerrainMesh {
 
             let n = 0;
             n += 1.0 * this.noise.get(nx * 1, nz * 1);
-            n = Math.pow(n + 1, settings.redistribution)
+            n = Math.pow(n, settings.redistribution)
 
-            const y = n * this.height;
+            const waterY = (settings.waterLevel - 0.5) * h
+            const y = Math.max((n - 0.5) * h, waterY);
             pos.setY(i, y);
+
+            if (y <= waterY + 0.01) {
+                color.set(0x1e90ff);
+            } else if (y < -h * 0.1) {
+                color.set(0xd9c28a);
+            } else if (y < h * 0.2) {
+                color.set(0x3f7c47);
+            } else if (y < h * 0.4) {
+                color.set(0x777777);
+            } else {
+                color.set(0xffffff);
+            }
+
+            colors.push(color.r, color.g, color.b);
         }
+        geometry.setAttribute(
+            'color',
+            new THREE.Float32BufferAttribute(colors, 3)
+        );
 
         geometry.attributes.position.needsUpdate = true
+        geometry.attributes.color.needsUpdate = true
         geometry.computeVertexNormals()
     }
 
@@ -51,6 +74,8 @@ export class TerrainMesh {
 
         const pos = geometry.attributes.position;
         const colors = [];
+        const color = new THREE.Color()
+        const h = this.height
 
         for (let i = 0; i < pos.count; i++) {
             const x = pos.getX(i);
@@ -62,14 +87,32 @@ export class TerrainMesh {
             let n = 0;
             n += 1.0 * this.noise.get(nx * 1, nz * 1);
 
-            const y = n * this.height;
+            const y = (n - 0.5) * this.height;
             pos.setY(i, y);
+
+            if (y < -h * 0.25) {
+                color.set(0x1e90ff);
+            } else if (y < -h * 0.1) {
+                color.set(0xd9c28a);
+            } else if (y < h * 0.2) {
+                color.set(0x3f7c47);
+            } else if (y < h * 0.4) {
+                color.set(0x777777);
+            } else {
+                color.set(0xffffff);
+            }
+
+            colors.push(color.r, color.g, color.b);
         }
+
+        geometry.setAttribute(
+            'color',
+            new THREE.Float32BufferAttribute(colors, 3)
+        );
 
 
         const material = new THREE.MeshStandardMaterial({
-            color: 0x88aa66,
-            wireframe: false,
+            vertexColors: true,
             side: THREE.DoubleSide,
         })
 

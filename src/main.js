@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { add } from 'three/src/nodes/math/OperatorNode.js';
 import GUI from 'lil-gui'
 import { TerrainMesh } from './TerrainMesh';
+import { RandomTerrainMesh } from './RandomTerrain';
 
 const keys = {
   w: false,
@@ -79,6 +80,7 @@ light.position.set(10, 20, 10)
 
 scene.add(cube)
 const terrain = new TerrainMesh(5000, 256, settings)
+// const terrain = new RandomTerrainMesh(500, 500, 600)
 
 scene.add(terrain.getMesh())
 

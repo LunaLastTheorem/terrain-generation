@@ -28,22 +28,30 @@ document.addEventListener('keyup', (e) => {
 const gui = new GUI()
 
 const settings = {
-  frequency: 0.01,
-  redistribution: 0.01,
+  frequency: 3,
+  redistribution: 1.5,
   waterLevel: 0.01,
+
+  octaves: 3,
+  persistence: 0.35,
+  lacunarity: 2.0,
+
   regenerateFunction: function() {
     scene.remove(terrain.getMesh())
     terrain.rebuild()
     scene.add(terrain.getMesh())
   },
-  height: 60,
+  height: 3000,
 }
 
-gui.add(settings, 'frequency', 0, 0.2, 0.001).name('Frequency').onChange(() => terrain.update(settings))
-gui.add(settings, 'redistribution', 0, 3, 0.001).name('Elevation').onChange(() => terrain.update(settings))
+gui.add(settings, 'frequency', 0.5, 10, 0.1).name('Frequency').onChange(() => terrain.update(settings))
+gui.add(settings, 'redistribution', 0.5, 3, 0.01).name('Elevation').onChange(() => terrain.update(settings))
+gui.add(settings, 'octaves', 1, 3, 1).name('Octaves').onChange(() => terrain.update(settings))
+gui.add(settings, 'persistence', 0.3, 3, 0.01).name('Persistence').onChange(() => terrain.update(settings))
+gui.add(settings, 'lacunarity', 1.5, 2.5, 0.01).name('Lacunarity').onChange(() => terrain.update(settings))
 gui.add(settings, 'waterLevel', 0, 1, 0.01).name('Water Level').onChange(() => terrain.update(settings))
-gui.add(settings, 'height', 0, 1500, 10).name('Height').onChange(() => terrain.update(settings))
-gui.add(settings, 'regenerateFunction').name('Regenerate')
+gui.add(settings, 'height', 0, 6000, 10).name('Height').onChange(() => terrain.update(settings))
+//gui.add(settings, 'regenerateFunction').name('Regenerate')
 
 const scene = new THREE.Scene();
 
@@ -58,7 +66,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(container.clientWidth, container.clientHeight);
 
-camera.position.set(0, 100, 150)
+camera.position.set(0, 1500, 3000)
 camera.lookAt(0,0,0)
 const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -71,7 +79,7 @@ light.position.set(10, 20, 10)
 
 
 scene.add(cube)
-const terrain = new TerrainMesh(5000, 500, 600)
+const terrain = new TerrainMesh(5000, 256, settings)
 // const terrain = new RandomTerrainMesh(500, 500, 600)
 
 scene.add(terrain.getMesh())

@@ -2,16 +2,17 @@ import * as THREE from 'three';
 import { PerlinNoise } from './PerlinNoise';
 
 export class TerrainMesh {
-    constructor(size = 1000, resolution = 200, height = 15) {
+    constructor(size = 1000, resolution = 200, settings) {
         this.size = size;
         this.resolution = resolution;
-        this.height = height;
-        this.noise = new PerlinNoise(8);
+        this.settings = settings;
+        this.height = settings.height;
+        this.noise = new PerlinNoise(64);
         this.mesh = this._build();
     }
 
     rebuild() {
-        this.noise = new PerlinNoise(8)
+        this.noise = new PerlinNoise(64)
         this.mesh = this._build()
     }
 
@@ -19,7 +20,7 @@ export class TerrainMesh {
         const geometry = this.mesh.geometry
         const colors = [];
         const color = new THREE.Color()
-        const h = settings.height
+        const h = this.settings.height
 
         const pos = geometry.attributes.position;
 
@@ -27,18 +28,18 @@ export class TerrainMesh {
             const x = pos.getX(i);
             const z = pos.getZ(i);
 
-            const nx = (x / this.size + 0.5) * 4;
-            const nz = (z / this.size + 0.5) * 4;
+            let y = this.getHeight(x, z);
 
-            let n = 0;
-            n += 1.0 * this.noise.get(nx * 1, nz * 1);
-            n = Math.pow(n, settings.redistribution)
+            const waterY =
+                (this.settings.waterLevel - 0.5) *
+                this.settings.height;
 
-            const waterY = (settings.waterLevel - 0.5) * h
-            const y = Math.max((n - 0.5) * h, waterY);
+            if (y < waterY) {
+                y = waterY;
+            }
             pos.setY(i, y);
 
-            if (y <= waterY + 0.01) {
+            if (y <= waterY) {
                 color.set(0x1e90ff);
             } else if (y < -h * 0.1) {
                 color.set(0xd9c28a);
@@ -62,6 +63,27 @@ export class TerrainMesh {
         geometry.computeVertexNormals()
     }
 
+    fractalNoise(x, z, octaves = 4, persistence = 0.5, lacunarity = 2.0) {
+    let amplitude = 1;
+    let frequency = 1;
+    let total = 0;
+    let maxValue = 0;
+
+    for (let i = 0; i < octaves; i++) {
+        total += this.noise.get(
+            x * frequency,
+            z * frequency
+        ) * amplitude;
+
+        maxValue += amplitude;
+
+        amplitude *= persistence;
+        frequency *= lacunarity;
+    }
+
+        return total / maxValue;
+    }
+
     _build() {
         const geometry = new THREE.PlaneGeometry(
             this.size,
@@ -75,19 +97,22 @@ export class TerrainMesh {
         const pos = geometry.attributes.position;
         const colors = [];
         const color = new THREE.Color()
-        const h = this.height
+        const h = this.settings.height
 
         for (let i = 0; i < pos.count; i++) {
             const x = pos.getX(i);
             const z = pos.getZ(i);
 
-            const nx = (x / this.size + 0.5) * 4;
-            const nz = (z / this.size + 0.5) * 4;
+            const y = this.getHeight(x, z);
 
-            let n = 0;
-            n += 1.0 * this.noise.get(nx * 1, nz * 1);
+            const waterY =
+                (this.settings.waterLevel - 0.5) *
+                this.settings.height;
 
-            const y = (n - 0.5) * this.height;
+            if (y < waterY) {
+                y = waterY;
+            }
+
             pos.setY(i, y);
 
             if (y < -h * 0.25) {
@@ -117,6 +142,27 @@ export class TerrainMesh {
         })
 
         return new THREE.Mesh(geometry, material);
+    }
+
+    getHeight(x, z) {
+        const s = this.settings;
+
+        const nx = ((x + this.size * 0.5) / this.size) * s.frequency;
+        const nz = ((z + this.size * 0.5) / this.size) * s.frequency;
+
+        let n = this.fractalNoise(
+            nx,
+            nz,
+            s.octaves,
+            s.persistence,
+            s.lacunarity
+        );
+
+        n = Math.max(0, Math.min(1, n));
+
+        n = Math.pow(n, s.redistribution);
+
+        return (n - 0.5) * s.height;
     }
 
     getMesh() {

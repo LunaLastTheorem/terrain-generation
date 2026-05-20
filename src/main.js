@@ -32,7 +32,7 @@ const settings = {
   waterLevel: 0.01,
 
   octaves: 3,
-  persistence: 0.35,
+  persistence: 0.5,
   lacunarity: 2.0,
 
   regenerateFunction: function() {

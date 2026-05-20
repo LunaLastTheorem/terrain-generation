@@ -64,24 +64,24 @@ export class TerrainMesh {
     }
 
     fractalNoise(x, z, octaves = 4, persistence = 0.5, lacunarity = 2.0) {
-    let amplitude = 1;
-    let frequency = 1;
-    let total = 0;
-    let maxValue = 0;
+        let amplitude = 1;
+        let frequency = 1;
+        let total = 0;
+        let maxValue = 0;
 
-    for (let i = 0; i < octaves; i++) {
-        total += this.noise.get(
-            x * frequency,
-            z * frequency
-        ) * amplitude;
+        for (let i = 0; i < octaves; i++) {
+            total += this.noise.get(
+                x * frequency,
+                z * frequency
+            ) * amplitude;
 
-        maxValue += amplitude;
+            maxValue += amplitude;
 
-        amplitude *= persistence;
-        frequency *= lacunarity;
-    }
+            amplitude *= persistence;
+            frequency *= lacunarity;
+        }
 
-        return total / maxValue;
+            return total / maxValue;
     }
 
     _build() {
